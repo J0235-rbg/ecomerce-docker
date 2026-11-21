@@ -8,5 +8,6 @@ const app = express();
 app.use(express.json());
 
 app.post('/orders', orderController.processOrder);
+app.get('/order/:id', orderController.getOrder);
 
 export default app;
