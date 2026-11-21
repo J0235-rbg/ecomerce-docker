@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { inject, injectable } from 'inversify';
 import logger from '../lib/logger';
-import { PaymentError, ValidationError } from '../domain/errors';
+import { OrderNotFoundError, PaymentError, ValidationError } from '../domain/errors';
 import { OrderService } from '../services/OrderService';
 
 @injectable()
@@ -21,4 +21,21 @@ export class OrderController {
       return res.status(500).json({ error: 'Erro interno' });
     }
   };
+
+  getOrder = async (req: Request, res: Response) => {
+    try {
+      const id = Number(req.params.id);
+      if(!Number.isInteger(id)){
+        return res.status(404).json({ error: `Pedido não encontrado`});
+      }
+      const order = await this.orderService.getOrder(id);
+      return res.status(200).json(order);
+    } catch (error: any) {
+      if(error instanceof OrderNotFoundError){
+        return res.status(404).json({ error: error.message });
+      }
+      logger.error(`Erro ao buscar pedido: ${error.message}`);
+      return res.status(500).json({ error: 'Erro interno' });
+    }
+  }
 }
