@@ -1,0 +1,17 @@
+services:
+  banco:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_USER=ecomerce
+      - POSTGRES_PASSWORD=ecomerce
+      - POSTGRES_DB=ecomerce
+    volumes:
+      - dados-banco:/var/lib/postgresql/data
+
+    api:
+    build: .
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    
